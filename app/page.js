@@ -399,6 +399,14 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* ─── FOOTER : MADE BY ─── */}
+      <footer className="made-by-footer">
+        <span>Made with ❤️ by </span>
+        <a href="https://bigdon-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="made-by-link">
+          BigDon
+        </a>
+      </footer>
     </div>
   );
 }

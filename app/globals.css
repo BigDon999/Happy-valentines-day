@@ -1078,3 +1078,57 @@ body {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 }
+
+/* ============================================
+   MADE BY FOOTER
+   ============================================ */
+
+.made-by-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.6rem 1rem;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--rose-400);
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 248, 246, 0.85) 40%, rgba(255, 248, 246, 0.95) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  letter-spacing: 0.3px;
+  pointer-events: auto;
+}
+
+.made-by-link {
+  color: var(--rose-600);
+  font-weight: 700;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.made-by-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, var(--rose-500), var(--pink-500));
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+
+.made-by-link:hover {
+  color: var(--deep-rose);
+}
+
+.made-by-link:hover::after {
+  width: 100%;
+}
