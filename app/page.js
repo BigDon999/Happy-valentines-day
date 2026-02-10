@@ -1,65 +1,404 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useCallback, useRef } from "react";
+
+/* ─── FLOATING HEARTS ─── */
+function FloatingHearts() {
+  const hearts = [
+    { emoji: "❤️", x: "5%", dur: "9s", del: "0s", bl: "1px", op: 0.4, sz: "1.2rem" },
+    { emoji: "💕", x: "15%", dur: "11s", del: "2s", bl: "0px", op: 0.6, sz: "1rem" },
+    { emoji: "💗", x: "25%", dur: "8s", del: "4s", bl: "2px", op: 0.3, sz: "1.5rem" },
+    { emoji: "❤️", x: "35%", dur: "13s", del: "1s", bl: "0px", op: 0.5, sz: "0.9rem" },
+    { emoji: "💖", x: "45%", dur: "10s", del: "3s", bl: "1px", op: 0.4, sz: "1.3rem" },
+    { emoji: "💗", x: "55%", dur: "12s", del: "5s", bl: "0px", op: 0.5, sz: "1.1rem" },
+    { emoji: "❤️", x: "65%", dur: "9s", del: "2.5s", bl: "2px", op: 0.3, sz: "1.4rem" },
+    { emoji: "💕", x: "75%", dur: "11s", del: "0.5s", bl: "0px", op: 0.6, sz: "1rem" },
+    { emoji: "💖", x: "85%", dur: "8s", del: "3.5s", bl: "1px", op: 0.4, sz: "1.2rem" },
+    { emoji: "❤️", x: "92%", dur: "14s", del: "1.5s", bl: "0px", op: 0.5, sz: "0.8rem" },
+    { emoji: "💗", x: "10%", dur: "10s", del: "6s", bl: "1px", op: 0.35, sz: "1.1rem" },
+    { emoji: "💕", x: "50%", dur: "12s", del: "7s", bl: "2px", op: 0.3, sz: "1.3rem" },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="floating-hearts">
+      {hearts.map((h, i) => (
+        <span
+          key={i}
+          className="floating-heart"
+          style={{ "--x": h.x, "--dur": h.dur, "--del": h.del, "--bl": h.bl, "--op": h.op, fontSize: h.sz }}
+        >
+          {h.emoji}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/* ─── ROSE PETALS ─── */
+function RosePetals() {
+  const petals = [
+    { x: "8%", sz: "11px", dur: "9s", del: "0s", bl: "1px", op: 0.4, cl: "#fda4af" },
+    { x: "18%", sz: "14px", dur: "12s", del: "2.5s", bl: "0px", op: 0.5, cl: "#f9a8d4" },
+    { x: "28%", sz: "9px", dur: "10s", del: "5s", bl: "1.5px", op: 0.35, cl: "#fecdd3" },
+    { x: "38%", sz: "16px", dur: "14s", del: "1s", bl: "0px", op: 0.45, cl: "#fbcfe8" },
+    { x: "48%", sz: "12px", dur: "11s", del: "3.5s", bl: "1px", op: 0.4, cl: "#fda4af" },
+    { x: "58%", sz: "10px", dur: "8.5s", del: "6s", bl: "0.5px", op: 0.5, cl: "#f9a8d4" },
+    { x: "68%", sz: "15px", dur: "13s", del: "0.5s", bl: "2px", op: 0.35, cl: "#fecdd3" },
+    { x: "78%", sz: "11px", dur: "9.5s", del: "4s", bl: "0px", op: 0.45, cl: "#fbcfe8" },
+    { x: "88%", sz: "13px", dur: "11.5s", del: "7s", bl: "1px", op: 0.4, cl: "#fda4af" },
+    { x: "95%", sz: "9px", dur: "10.5s", del: "2s", bl: "1.5px", op: 0.5, cl: "#f9a8d4" },
+  ];
+
+  return (
+    <div className="floating-hearts">
+      {petals.map((p, i) => (
+        <div
+          key={i}
+          className="petal"
+          style={{ "--x": p.x, "--sz": p.sz, "--dur": p.dur, "--del": p.del, "--bl": p.bl, "--op": p.op, "--cl": p.cl }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+      ))}
+    </div>
+  );
+}
+
+/* ─── CONFETTI ─── */
+function Confetti({ active }) {
+  if (!active) return null;
+  const colors = ["#f43f5e", "#ec4899", "#fb7185", "#f9a8d4", "#fda4af", "#d4a574", "#f0d9b5", "#ff6b81"];
+  const pieces = Array.from({ length: 50 }, (_, i) => {
+    const isHeart = i % 5 === 0;
+    return {
+      x: `${Math.random() * 100}%`,
+      sz: isHeart ? `${16 + Math.random() * 10}px` : `${6 + Math.random() * 7}px`,
+      c: colors[Math.floor(Math.random() * colors.length)],
+      dur: `${2 + Math.random() * 2}s`,
+      del: `${Math.random() * 1.5}s`,
+      rot: `${360 + Math.random() * 720}deg`,
+      dx: `${-35 + Math.random() * 70}px`,
+      rad: isHeart ? "0" : Math.random() > 0.5 ? "50%" : "2px",
+      isHeart,
+    };
+  });
+
+  return (
+    <div className="confetti-layer">
+      {pieces.map((p, i) => (
+        <div
+          key={i}
+          className={`confetti-bit${p.isHeart ? " heart" : ""}`}
+          style={{ "--x": p.x, "--sz": p.sz, "--c": p.c, "--dur": p.dur, "--del": p.del, "--rot": p.rot, "--dx": p.dx, "--rad": p.rad }}
+        >
+          {p.isHeart ? "❤️" : ""}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ─── ORBITING HEARTS ─── */
+function OrbitingHearts() {
+  const orbits = [
+    { emoji: "💗", spd: "5s", r: "60px", del: "0s" },
+    { emoji: "💕", spd: "7s", r: "80px", del: "-2s" },
+    { emoji: "✨", spd: "6s", r: "70px", del: "-4s" },
+    { emoji: "💖", spd: "8s", r: "90px", del: "-1s" },
+  ];
+
+  return (
+    <>
+      {orbits.map((o, i) => (
+        <span key={i} className="orbit-heart" style={{ "--spd": o.spd, "--r": o.r, animationDelay: o.del }}>
+          {o.emoji}
+        </span>
+      ))}
+    </>
+  );
+}
+
+/* ─── SPARKLES ─── */
+const SPARKS = [
+  { top: "12%", left: "18%", spd: "2.2s", del: "0s", sz: "4px" },
+  { top: "22%", left: "78%", spd: "3s", del: "0.8s", sz: "5px" },
+  { top: "42%", left: "10%", spd: "2.5s", del: "1.5s", sz: "3px" },
+  { top: "58%", left: "88%", spd: "1.8s", del: "0.3s", sz: "6px" },
+  { top: "32%", left: "52%", spd: "2.8s", del: "2s", sz: "4px" },
+  { top: "72%", left: "32%", spd: "2s", del: "1s", sz: "5px" },
+  { top: "52%", left: "68%", spd: "3.2s", del: "0.5s", sz: "3px" },
+  { top: "82%", left: "48%", spd: "2.4s", del: "1.8s", sz: "6px" },
+  { top: "18%", left: "42%", spd: "1.7s", del: "2.5s", sz: "4px" },
+  { top: "68%", left: "12%", spd: "2.6s", del: "0.2s", sz: "5px" },
+  { top: "38%", left: "92%", spd: "2.1s", del: "1.2s", sz: "3px" },
+  { top: "48%", left: "55%", spd: "3.4s", del: "0.7s", sz: "4px" },
+];
+
+function Sparkles({ count = 8 }) {
+  return (
+    <>
+      {SPARKS.slice(0, count).map((s, i) => (
+        <div key={i} className="sparkle" style={{ top: s.top, left: s.left, "--spd": s.spd, "--del": s.del, "--sz": s.sz }} />
+      ))}
+    </>
+  );
+}
+
+/* ─── MAIN APP ─── */
+export default function Home() {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [giftOpened, setGiftOpened] = useState(false);
+  const [noButtonPos, setNoButtonPos] = useState({ x: 0, y: 0 });
+  const [noAttempts, setNoAttempts] = useState(0);
+  const [showGiftReveal, setShowGiftReveal] = useState(false);
+  const noButtonRef = useRef(null);
+
+  const goToPage = useCallback((p) => setCurrentPage(p), []);
+
+  const handleYes = useCallback(() => {
+    setShowConfetti(true);
+    goToPage(3);
+    setTimeout(() => setShowConfetti(false), 5000);
+  }, [goToPage]);
+
+  const handleNoHover = useCallback(() => {
+    const mX = typeof window !== "undefined" ? window.innerWidth - 200 : 300;
+    const mY = typeof window !== "undefined" ? window.innerHeight - 100 : 300;
+    setNoButtonPos({ x: Math.random() * mX - mX / 2, y: Math.random() * mY - mY / 2 });
+    setNoAttempts((p) => p + 1);
+  }, []);
+
+  const handleOpenGift = useCallback(() => {
+    setGiftOpened(true);
+    setTimeout(() => setShowGiftReveal(true), 800);
+  }, []);
+
+  const noMsgs = ["No 😅", "Are you sure? 🥺", "Really?! 😢", "Think again! 💔", "Please? 🥹", "I'll be sad... 😭", "One more chance? 🙏", "Pretty please? 🌹"];
+
+  const pgClass = (idx) =>
+    `page ${idx === 0 ? "page-landing" : idx === 1 ? "page-message" : idx === 2 ? "page-question" : idx === 3 ? "page-celebration" : "page-gift"} ${currentPage === idx ? "active" : currentPage > idx ? "exit-left" : ""}`;
+
+  return (
+    <div className="valentine-app">
+      <Confetti active={showConfetti} />
+
+      {/* ─── PAGE 1 : LANDING ─── */}
+      <div className={pgClass(0)}>
+        <FloatingHearts />
+        <RosePetals />
+
+        <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
+          <div className="heart-glow" />
+          <div className="heart-main" style={{ fontSize: "clamp(4rem,12vw,7rem)" }}>❤️</div>
+          <OrbitingHearts />
+        </div>
+
+        <h1 className="heading">Happy Valentine&apos;s Day ❤️</h1>
+
+        <div className="divider">
+          <div className="divider-line" />
+          <span className="divider-dot">♥</span>
+          <div className="divider-line" />
+        </div>
+
+        <p className="subtext">There&apos;s something special I want to ask you…</p>
+
+        <div style={{ marginTop: "2rem" }}>
+          <button id="btn-continue" className="btn" onClick={() => goToPage(1)}>Continue ✨</button>
+        </div>
+      </div>
+
+      {/* ─── PAGE 2 : LOVE MESSAGE ─── */}
+      <div className={pgClass(1)}>
+        <FloatingHearts />
+        <RosePetals />
+
+        {/* Envelope */}
+        <div className="envelope">💌</div>
+
+        {/* Love Letter Card */}
+        <div className="letter-card">
+          <Sparkles count={6} />
+
+          <p className="letter-line" style={{ "--d": "0.4s" }}>
+            Every moment with you means more than you know…
+          </p>
+
+          <div style={{ height: "0.8rem" }} />
+
+          <p className="letter-line letter-accent" style={{ "--d": "0.7s" }}>
+            You make the ordinary feel extraordinary, and every day brighter just by being you.
+          </p>
+
+          <div style={{ height: "0.8rem" }} />
+
+          <p className="letter-line letter-accent" style={{ "--d": "1s", color: "#be123c" }}>
+            My heart beats for you, today and always. 🌹
+          </p>
+
+          <p className="letter-signature">— With all my love 💕</p>
+        </div>
+
+        <div className="divider" style={{ animationDelay: "1s" }}>
+          <div className="divider-line" />
+          <span className="divider-dot">♥</span>
+          <div className="divider-line" />
+        </div>
+
+        <div style={{ marginTop: "0.5rem" }}>
+          <button id="btn-question" className="btn" onClick={() => goToPage(2)} style={{ animationDelay: "1.2s" }}>
+            I have a question… 💭
+          </button>
+        </div>
+      </div>
+
+      {/* ─── PAGE 3 : THE BIG QUESTION ─── */}
+      <div className={pgClass(2)}>
+        <FloatingHearts />
+        <RosePetals />
+
+        {/* Heart with pulse rings */}
+        <div className="question-wrap">
+          <div className="pulse-ring" style={{ "--d": "0s" }} />
+          <div className="pulse-ring" style={{ "--d": "1s" }} />
+          <div className="pulse-ring" style={{ "--d": "2s" }} />
+          <div className="heart-glow" />
+          <div className="heart-main" style={{ fontSize: "clamp(3rem,9vw,4.5rem)" }}>💝</div>
+        </div>
+
+        <h2 className="heading" style={{ animationDelay: "0.2s" }}>Will you be my Valentine?</h2>
+
+        <p className="subtext" style={{ animationDelay: "0.5s", maxWidth: "300px", color: "#e91e63", fontSize: "clamp(0.9rem,2.5vw,1.1rem)" }}>
+          This is the most important question I&apos;ve ever asked… 💕
+        </p>
+
+        <div className="divider">
+          <div className="divider-line" />
+          <span className="divider-dot">♥</span>
+          <div className="divider-line" />
+        </div>
+
+        <div className="question-btns">
+          <button id="btn-yes" className="btn btn-large" onClick={handleYes} style={{ animationDelay: "0.6s" }}>
+            Yes ❤️
+          </button>
+          <button
+            id="btn-no"
+            ref={noButtonRef}
+            className="btn btn-no"
+            onMouseEnter={handleNoHover}
+            onTouchStart={handleNoHover}
+            onClick={handleNoHover}
+            style={{
+              transform: `translate(${noButtonPos.x}px, ${noButtonPos.y}px) scale(${Math.max(0.7, 1 - noAttempts * 0.05)})`,
+              transition: "transform 0.3s ease",
+            }}
+          >
+            {noMsgs[Math.min(noAttempts, noMsgs.length - 1)]}
+          </button>
+        </div>
+      </div>
+
+      {/* ─── PAGE 4 : CELEBRATION ─── */}
+      <div className={pgClass(3)}>
+        <FloatingHearts />
+        <RosePetals />
+
+        <div className="celeb-glow" />
+
+        <div style={{ fontSize: "clamp(3rem,9vw,4.5rem)", animation: "bounceIn .6s ease-out both", marginBottom: "0.3rem" }}>
+          🎉
+        </div>
+
+        <h2 className="yay-text">Yay!!!</h2>
+
+        <div className="celeb-card">
+          <Sparkles count={6} />
+          <p style={{
+            fontFamily: "'Playfair Display', serif",
+            fontStyle: "italic",
+            fontSize: "clamp(1rem,2.8vw,1.25rem)",
+            color: "#e91e63",
+            lineHeight: 1.7,
+            animation: "fadeUp .8s ease-out .4s both",
+          }}>
+            You just made me the happiest person in the world! 🥰
+          </p>
+          <div style={{ height: "0.5rem" }} />
+          <p className="body-text" style={{ animation: "fadeUp .8s ease-out .7s both" }}>
+            I knew you&apos;d say yes… my heart was already yours. 💖
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="celeb-emojis" style={{ marginTop: "0.8rem" }}>
+          {["💖", "💕", "❤️", "💗", "💝"].map((e, i) => (
+            <span key={i} className="celeb-emoji" style={{ "--spd": `${2 + i * 0.3}s`, "--del": `${i * 0.15}s` }}>
+              {e}
+            </span>
+          ))}
         </div>
-      </main>
+
+        <div style={{ marginTop: "1.2rem" }}>
+          <button id="btn-gift" className="btn btn-gold" onClick={() => goToPage(4)} style={{ animationDelay: "1s" }}>
+            Open Your Gift 🎁
+          </button>
+        </div>
+      </div>
+
+      {/* ─── PAGE 5 : GIFT REVEAL ─── */}
+      <div className={pgClass(4)}>
+        <FloatingHearts />
+        <RosePetals />
+        <Sparkles count={10} />
+
+        {/* Gift Box */}
+        <div className="gift-wrap">
+          <div
+            className={`gift-box ${giftOpened ? "opened" : ""}`}
+            onClick={handleOpenGift}
+            style={{ cursor: giftOpened ? "default" : "pointer" }}
+          >
+            <div className="gift-bow">
+              <div className="bow-knot" />
+            </div>
+            <div className="gift-lid" />
+            <div className="gift-body" />
+            <div className="gift-rays" />
+          </div>
+
+          {!giftOpened && (
+            <p className="body-text" style={{ marginTop: "1.4rem", color: "#c2185b", animation: "fadeUp 1s ease-out .5s both" }}>
+              Tap to open your gift ✨
+            </p>
+          )}
+        </div>
+
+        {/* Reveal Card */}
+        <div className={`reveal-card ${showGiftReveal ? "show" : ""}`} style={{ marginTop: "1.5rem" }}>
+          <Sparkles count={8} />
+
+          <div style={{ fontSize: "clamp(2.2rem,6vw,3rem)", marginBottom: "0.6rem" }}>🌹</div>
+
+          <p className="reveal-msg">My heart is your gift, today and always.</p>
+
+          <div className="divider" style={{ justifyContent: "center", margin: "0.6rem auto" }}>
+            <div className="divider-line" />
+            <span className="divider-dot">♥</span>
+            <div className="divider-line" />
+          </div>
+
+          <p className="reveal-sub">
+            I promise to love you, cherish you, and make every day feel like Valentine&apos;s Day. You are my forever. 💕
+          </p>
+
+          <p className="reveal-final">Happy Valentine&apos;s Day, my love ❤️</p>
+
+          <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.8rem", fontSize: "clamp(1.2rem,3vw,1.6rem)", justifyContent: "center" }}>
+            {["🌹", "💖", "✨", "💖", "🌹"].map((e, i) => (
+              <span key={i} className="celeb-emoji" style={{ "--spd": `${2 + i * 0.2}s`, "--del": `${i * 0.1}s` }}>{e}</span>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
