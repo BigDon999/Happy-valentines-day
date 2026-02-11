@@ -11,6 +11,7 @@ function MusicPlayer() {
   const [duration, setDuration] = useState(0);
   const audioRef = useRef(null);
   const progressRef = useRef(null);
+  const userPausedRef = useRef(false);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -28,6 +29,7 @@ function MusicPlayer() {
     };
 
     const handleEnded = () => {
+      if (userPausedRef.current) return;
       audio.currentTime = 0;
       audio.play();
     };
@@ -54,6 +56,7 @@ function MusicPlayer() {
 
     // Unmute on ANY user interaction
     const unmuteOnInteraction = () => {
+      if (userPausedRef.current) return;
       if (!hasUnmuted && audio) {
         audio.muted = false;
         hasUnmuted = true;
@@ -78,9 +81,9 @@ function MusicPlayer() {
     // Start immediately
     forcePlay();
 
-    // Retry if somehow paused
+    // Retry if somehow paused (but respect user's choice to pause)
     const retryInterval = setInterval(() => {
-      if (audio.paused) {
+      if (audio.paused && !userPausedRef.current) {
         audio.play().catch(() => {});
         setIsPlaying(true);
         setIsOpen(true);
@@ -103,7 +106,9 @@ function MusicPlayer() {
     if (!audio) return;
     if (isPlaying) {
       audio.pause();
+      userPausedRef.current = true;
     } else {
+      userPausedRef.current = false;
       audio.play();
     }
     setIsPlaying(!isPlaying);
