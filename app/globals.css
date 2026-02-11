@@ -35,6 +35,16 @@
   box-sizing: border-box;
 }
 
+a,
+a:link,
+a:visited,
+a:hover,
+a:active {
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   background: var(--warm-white);
   color: #4a1a2e;
