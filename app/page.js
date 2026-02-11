@@ -2,6 +2,44 @@
 
 import { useState, useCallback, useRef } from "react";
 
+/* ─── MUSIC PLAYER ─── */
+function MusicPlayer() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="music-player-wrapper">
+      {/* Toggle Button */}
+      <button
+        className={`music-toggle ${isOpen ? "active" : ""}`}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle music player"
+      >
+        <span className="music-icon">{isOpen ? "✕" : "🎵"}</span>
+        {!isOpen && <span className="music-pulse" />}
+      </button>
+
+      {/* Spotify Player */}
+      <div className={`music-panel ${isOpen ? "open" : ""}`}>
+        <div className="music-panel-header">
+          <span>🎶</span>
+          <span>Now Playing</span>
+          <span>💕</span>
+        </div>
+        <iframe
+          style={{ borderRadius: "12px", border: "none" }}
+          src="https://open.spotify.com/embed/track/5ZrDlcxAyYMHjbqRqGYLJx?utm_source=generator&theme=0"
+          width="100%"
+          height="152"
+          allowFullScreen
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+          title="Love Songs - Kaash Paige"
+        />
+      </div>
+    </div>
+  );
+}
+
 /* ─── FLOATING HEARTS ─── */
 function FloatingHearts() {
   const hearts = [
@@ -399,6 +437,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* ─── MUSIC PLAYER ─── */}
+      <MusicPlayer />
 
       {/* ─── FOOTER : MADE BY ─── */}
       <footer className="made-by-footer">

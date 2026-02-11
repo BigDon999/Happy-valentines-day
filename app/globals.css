@@ -989,12 +989,148 @@ body {
 }
 
 /* ============================================
+   MUSIC PLAYER
+   ============================================ */
+
+.music-player-wrapper {
+  position: fixed;
+  bottom: 40px;
+  left: 20px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.music-toggle {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid var(--rose-300);
+  background: linear-gradient(135deg, var(--rose-500) 0%, var(--pink-500) 100%);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 20px rgba(244, 63, 94, 0.35),
+              0 0 0 0 rgba(244, 63, 94, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+  animation: musicBtnGlow 2s ease-in-out infinite;
+}
+
+.music-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 25px rgba(244, 63, 94, 0.5);
+}
+
+.music-toggle.active {
+  background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%);
+  border-color: #ccc;
+  animation: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.music-icon {
+  line-height: 1;
+  z-index: 2;
+}
+
+.music-pulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--rose-400);
+  animation: musicPulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes musicPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes musicBtnGlow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(244, 63, 94, 0.35),
+                0 0 0 0 rgba(244, 63, 94, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(244, 63, 94, 0.45),
+                0 0 20px 4px rgba(244, 63, 94, 0.15);
+  }
+}
+
+.music-panel {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  width: 300px;
+  background: linear-gradient(135deg, rgba(255, 249, 250, 0.97) 0%, rgba(255, 241, 242, 0.97) 100%);
+  border: 1px solid var(--rose-200);
+  border-radius: 16px;
+  padding: 0.8rem;
+  box-shadow: 0 10px 40px rgba(244, 63, 94, 0.15),
+              0 4px 15px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.music-panel.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+.music-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.1rem;
+  color: var(--rose-600);
+  font-weight: 600;
+}
+
+/* ============================================
    RESPONSIVE
    ============================================ */
 
 @media (max-width: 640px) {
   .page {
     padding: 1.5rem 1rem;
+  }
+
+  .music-player-wrapper {
+    bottom: 35px;
+    left: 12px;
+  }
+
+  .music-toggle {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+
+  .music-panel {
+    width: 260px;
+    bottom: 54px;
   }
 
   .heart-glow {
