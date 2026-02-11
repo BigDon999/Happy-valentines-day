@@ -36,6 +36,27 @@ function MusicPlayer() {
     audio.addEventListener("loadedmetadata", handleLoaded);
     audio.addEventListener("ended", handleEnded);
 
+    // Autoplay: try immediately, fallback to first user interaction
+    const tryAutoplay = () => {
+      audio.play().then(() => {
+        setIsPlaying(true);
+        setIsOpen(true);
+      }).catch(() => {
+        // Browser blocked autoplay — start on first click/tap anywhere
+        const startOnInteraction = () => {
+          audio.play().then(() => {
+            setIsPlaying(true);
+            setIsOpen(true);
+          }).catch(() => {});
+          document.removeEventListener("click", startOnInteraction);
+          document.removeEventListener("touchstart", startOnInteraction);
+        };
+        document.addEventListener("click", startOnInteraction, { once: true });
+        document.addEventListener("touchstart", startOnInteraction, { once: true });
+      });
+    };
+    tryAutoplay();
+
     return () => {
       audio.removeEventListener("timeupdate", updateProgress);
       audio.removeEventListener("loadedmetadata", handleLoaded);
@@ -534,13 +555,7 @@ export default function Home() {
       {/* ─── MUSIC PLAYER ─── */}
       <MusicPlayer />
 
-      {/* ─── FOOTER : MADE BY ─── */}
-      <footer className="made-by-footer">
-        <span>Made with ❤️ by </span>
-        <a href="https://bigdon-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="made-by-link">
-          BigDon
-        </a>
-      </footer>
+
     </div>
   );
 }
