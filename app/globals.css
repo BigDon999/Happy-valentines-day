@@ -33,16 +33,28 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent; /* Removes blue tap box on mobile */
 }
 
-a,
-a:link,
-a:visited,
-a:hover,
-a:active {
+/* Remove default blue focus rings */
+*:focus {
+  outline: none;
+}
+
+/* Optional: Custom soft focus for accessibility (visible only when using keyboard) */
+*:focus-visible {
+  outline: 2px solid var(--rose-400);
+  outline-offset: 2px;
+}
+
+a {
   color: inherit;
   text-decoration: none;
+}
+
+button {
   -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 body {
