@@ -1,40 +1,133 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 /* ─── MUSIC PLAYER ─── */
 function MusicPlayer() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef(null);
+  const progressRef = useRef(null);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateProgress = () => {
+      if (audio.duration) {
+        setProgress((audio.currentTime / audio.duration) * 100);
+        setCurrentTime(audio.currentTime);
+      }
+    };
+
+    const handleLoaded = () => {
+      setDuration(audio.duration);
+    };
+
+    const handleEnded = () => {
+      audio.currentTime = 0;
+      audio.play();
+    };
+
+    audio.addEventListener("timeupdate", updateProgress);
+    audio.addEventListener("loadedmetadata", handleLoaded);
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.removeEventListener("timeupdate", updateProgress);
+      audio.removeEventListener("loadedmetadata", handleLoaded);
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, []);
+
+  const togglePlay = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+    }
+    setIsPlaying(!isPlaying);
+  }, [isPlaying]);
+
+  const handleSeek = useCallback((e) => {
+    const audio = audioRef.current;
+    const bar = progressRef.current;
+    if (!audio || !bar) return;
+    const rect = bar.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    audio.currentTime = pct * audio.duration;
+  }, []);
+
+  const fmt = (s) => {
+    if (!s || isNaN(s)) return "0:00";
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
 
   return (
     <div className="music-player-wrapper">
+      <audio ref={audioRef} src="/Arctic Monkeys - I Wanna Be Yours.mp3" preload="metadata" />
+
       {/* Toggle Button */}
       <button
-        className={`music-toggle ${isOpen ? "active" : ""}`}
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle music player"
+        className={`music-toggle ${isPlaying ? "playing" : ""}`}
+        onClick={() => {
+          if (!isOpen) {
+            setIsOpen(true);
+            if (!isPlaying) togglePlay();
+          } else {
+            togglePlay();
+          }
+        }}
+        aria-label="Toggle music"
       >
-        <span className="music-icon">{isOpen ? "✕" : "🎵"}</span>
-        {!isOpen && <span className="music-pulse" />}
+        <span className="music-icon">{isPlaying ? "🎶" : "🎵"}</span>
+        {!isPlaying && <span className="music-pulse" />}
+        {isPlaying && <span className="music-vinyl-ring" />}
       </button>
 
-      {/* Spotify Player */}
+      {/* Player Panel */}
       <div className={`music-panel ${isOpen ? "open" : ""}`}>
         <div className="music-panel-header">
           <span>🎶</span>
           <span>Now Playing</span>
           <span>💕</span>
         </div>
-        <iframe
-          style={{ borderRadius: "12px", border: "none" }}
-          src="https://open.spotify.com/embed/track/5ZrDlcxAyYMHjbqRqGYLJx?utm_source=generator&theme=0"
-          width="100%"
-          height="152"
-          allowFullScreen
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-          title="Love Songs - Kaash Paige"
-        />
+
+        {/* Song Info */}
+        <div className="music-song-info">
+          <div className="music-song-title">I Wanna Be Yours</div>
+          <div className="music-song-artist">Arctic Monkeys</div>
+        </div>
+
+        {/* Controls */}
+        <div className="music-controls">
+          <button className="music-play-btn" onClick={togglePlay}>
+            {isPlaying ? "⏸️" : "▶️"}
+          </button>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="music-progress-wrap" ref={progressRef} onClick={handleSeek}>
+          <div className="music-progress-bar">
+            <div className="music-progress-fill" style={{ width: `${progress}%` }}>
+              <span className="music-progress-dot" />
+            </div>
+          </div>
+          <div className="music-time">
+            <span>{fmt(currentTime)}</span>
+            <span>{fmt(duration)}</span>
+          </div>
+        </div>
+
+        {/* Close */}
+        <button className="music-close" onClick={() => setIsOpen(false)}>✕</button>
       </div>
     </div>
   );
