@@ -555,6 +555,12 @@ export default function Home() {
       {/* ─── MUSIC PLAYER ─── */}
       <MusicPlayer />
 
+      {/* ─── FOOTER ─── */}
+      <footer className="made-by-footer">
+        <a href="https://bigdon-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" className="made-by-link">
+          With love from me 2 you 💕
+        </a>
+      </footer>
 
     </div>
   );
