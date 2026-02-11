@@ -36,31 +36,65 @@ function MusicPlayer() {
     audio.addEventListener("loadedmetadata", handleLoaded);
     audio.addEventListener("ended", handleEnded);
 
-    // Autoplay: try immediately, fallback to first user interaction
-    const tryAutoplay = () => {
+    // FORCE AUTOPLAY: Start muted (always allowed), then unmute
+    let hasUnmuted = false;
+
+    const forcePlay = () => {
+      audio.muted = true;
       audio.play().then(() => {
         setIsPlaying(true);
         setIsOpen(true);
-      }).catch(() => {
-        // Browser blocked autoplay — start on first click/tap anywhere
-        const startOnInteraction = () => {
-          audio.play().then(() => {
-            setIsPlaying(true);
-            setIsOpen(true);
-          }).catch(() => {});
-          document.removeEventListener("click", startOnInteraction);
-          document.removeEventListener("touchstart", startOnInteraction);
-        };
-        document.addEventListener("click", startOnInteraction, { once: true });
-        document.addEventListener("touchstart", startOnInteraction, { once: true });
+        // Try to unmute after a short delay
+        setTimeout(() => {
+          audio.muted = false;
+          hasUnmuted = true;
+        }, 500);
+      }).catch(() => {});
+    };
+
+    // Unmute on ANY user interaction
+    const unmuteOnInteraction = () => {
+      if (!hasUnmuted && audio) {
+        audio.muted = false;
+        hasUnmuted = true;
+      }
+      if (audio.paused) {
+        audio.play().then(() => {
+          setIsPlaying(true);
+          setIsOpen(true);
+        }).catch(() => {});
+      }
+      // Clean up all listeners
+      ["click", "touchstart", "touchend", "scroll", "keydown", "mousemove", "pointerdown"].forEach(evt => {
+        document.removeEventListener(evt, unmuteOnInteraction);
       });
     };
-    tryAutoplay();
+
+    // Listen for every possible interaction
+    ["click", "touchstart", "touchend", "scroll", "keydown", "mousemove", "pointerdown"].forEach(evt => {
+      document.addEventListener(evt, unmuteOnInteraction, { once: true, passive: true });
+    });
+
+    // Start immediately
+    forcePlay();
+
+    // Retry if somehow paused
+    const retryInterval = setInterval(() => {
+      if (audio.paused) {
+        audio.play().catch(() => {});
+        setIsPlaying(true);
+        setIsOpen(true);
+      }
+    }, 1000);
 
     return () => {
       audio.removeEventListener("timeupdate", updateProgress);
       audio.removeEventListener("loadedmetadata", handleLoaded);
       audio.removeEventListener("ended", handleEnded);
+      clearInterval(retryInterval);
+      ["click", "touchstart", "touchend", "scroll", "keydown", "mousemove", "pointerdown"].forEach(evt => {
+        document.removeEventListener(evt, unmuteOnInteraction);
+      });
     };
   }, []);
 
