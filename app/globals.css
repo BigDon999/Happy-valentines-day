@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Quicksand:wght@300;400;500;600&display=swap');
-@import "tailwindcss";
 
 /* ============================================
    VALENTINE'S DAY — ROMANTIC DESIGN SYSTEM
@@ -28,14 +27,6 @@
   --deep-rose: #c2185b;
   --blush: #f8bbd0;
   --soft-shadow: rgba(244, 63, 94, 0.15);
-}
-
-@theme inline {
-  --color-background: var(--warm-white);
-  --color-foreground: #4a1a2e;
-  --font-sans: 'Quicksand', sans-serif;
-  --font-cursive: 'Dancing Script', cursive;
-  --font-serif: 'Playfair Display', serif;
 }
 
 * {
